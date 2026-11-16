@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>MVT Server - Kiara Artha Park</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <style>
+    body { margin: 0; padding: 0; font-family: sans-serif; }
+    #map { width: 100vw; height: 100vh; }
+    .info-box {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      color: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      z-index: 1;
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body>
+  <div class="info-box">
+    <strong>MVT Server (GitHub Pages - GET)</strong><br />
+    Area: Kiara Artha Park, Bandung<br />
+    <small>Klik objek pada peta untuk melihat atribut MVT</small>
+  </div>
+  <div id="map"></div>
+
+  <script>
+    // Otomatis mendeteksi URL root baik saat dibuka di localhost maupun di GitHub Pages
+    const baseUrl = window.location.href.replace(/\/[^\/]*$/, '');
+
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          'osm-raster': {
+            type: 'raster',
+            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tileSize: 256,
+            attribution: '© OpenStreetMap contributors'
+          },
+          'mvt-source': {
+            type: 'vector',
+            tiles: [`${baseUrl}/tiles/{z}/{x}/{y}.pbf`],
+            minzoom: 12,
+            maxzoom: 16
+          }
+        },
+        layers: [
+          {
+            id: 'basemap',
+            type: 'raster',
+            source: 'osm-raster'
+          },
+          {
+            id: 'mvt-polygon',
+            type: 'fill',
+            source: 'mvt-source',
+            'source-layer': 'layer_utama',
+            filter: ['==', '$type', 'Polygon'],
+            paint: {
+              // Warna biru jika kategori 'Danau Buatan', selain itu hijau taman
+              'fill-color': [
+                'match',
+                ['get', 'kategori'],
+                'Danau Buatan', '#0ea5e9',
+                '#10b981'
+              ],
+              'fill-opacity': 0.55,
+              'fill-outline-color': '#ffffff'
+            }
+          },
+          {
+            id: 'mvt-line',
+            type: 'line',
+            source: 'mvt-source',
+            'source-layer': 'layer_utama',
+            filter: ['==', '$type', 'LineString'],
+            paint: {
+              'line-color': '#f59e0b',
+              'line-width': 4
+            }
+          },
+          {
+            id: 'mvt-point',
+            type: 'circle',
+            source: 'mvt-source',
+            'source-layer': 'layer_utama',
+            filter: ['==', '$type', 'Point'],
+            paint: {
+              'circle-radius': 7,
+              'circle-color': '#8b5cf6',
+              'circle-stroke-width': 2,
+              'circle-stroke-color': '#ffffff'
+            }
+          }
+        ]
+      },
+      center: [107.6430, -6.9168], // Koordinat tengah Kiara Artha Park
+      zoom: 16
+    });
+
+    // Tambahkan kontrol zoom & rotasi di pojok kanan atas
+    map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+    // Ubah kursor menjadi pointer saat mengarah ke objek MVT
+    const interactiveLayers = ['mvt-polygon', 'mvt-line', 'mvt-point'];
+    interactiveLayers.forEach((layer) => {
+      map.on('mouseenter', layer, () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', layer, () => {
+        map.getCanvas().style.cursor = '';
+      });
+    });
+
+    // Tampilkan popup data atribut dari Vector Tile saat diklik
+    map.on('click', (e) => {
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: interactiveLayers
+      });
+
+      if (features.length > 0) {
+        const props = features[0].properties;
+        let html = '<div style="font-size:13px; line-height:1.5;">';
+        for (const [key, value] of Object.entries(props)) {
+          html += `<strong>${key}:</strong> ${value}<br/>`;
+        }
+        html += '</div>';
+
+        new maplibregl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(html)
+          .addTo(map);
+      }
+    });
+  </script>
+</body>
+</html>

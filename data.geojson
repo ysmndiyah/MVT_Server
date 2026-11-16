@@ -1,0 +1,86 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nama": "Kawasan Kiara Artha Park",
+        "kategori": "Taman Kota",
+        "kecamatan": "Batununggal / Kiaracondong",
+        "kota": "Bandung"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [107.6416, -6.9154],
+            [107.6443, -6.9154],
+            [107.6443, -6.9182],
+            [107.6416, -6.9182],
+            [107.6416, -6.9154]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nama": "Dancing Fountain Lake",
+        "kategori": "Danau Buatan",
+        "fasilitas": "Air Mancur Menari"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [107.6423, -6.9163],
+            [107.6434, -6.9163],
+            [107.6434, -6.9171],
+            [107.6423, -6.9171],
+            [107.6423, -6.9163]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nama": "Jalur Pedestrian Utama",
+        "kategori": "Lintasan Jalan Kaki",
+        "akses": "Umum"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [107.6417, -6.9167],
+          [107.6422, -6.9167],
+          [107.6429, -6.9174],
+          [107.6441, -6.9174]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nama": "Gerbang Utama Kiara Artha Park",
+        "kategori": "Pintu Masuk",
+        "jalan": "Jl. Banten"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [107.6417, -6.9167]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nama": "Kampung Korea Bandung",
+        "kategori": "Zona Wisata & Kuliner"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [107.6436, -6.9160]
+      }
+    }
+  ]
+}
